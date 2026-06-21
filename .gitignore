@@ -1,0 +1,10 @@
+node_modules/
+api/node_modules/
+api/cambirela.db
+images/projects/*.jpg
+images/projects/*.jpeg
+images/projects/*.png
+images/projects/*.webp
+.env
+.DS_Store
+*.log

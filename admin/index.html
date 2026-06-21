@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — Cambirela Construction</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --gold: #C8860A;
+      --dark: #1a1a1a;
+      --white: #fff;
+      --gray: #f5f4f0;
+      --border: rgba(0,0,0,0.1);
+      --text: #1a1a1a;
+      --muted: #6b6560;
+      --radius: 10px;
+      --danger: #dc2626;
+      --success: #16a34a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--gray); color: var(--text); min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: 'Inter', sans-serif; cursor: pointer; border: none; }
+
+    /* LOGIN */
+    #loginScreen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--dark);
+    }
+    .login-box {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+    }
+    .login-box h1 { font-size: 1.2rem; margin-bottom: 0.3rem; }
+    .login-box p { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
+    .login-box input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      margin-bottom: 1rem;
+    }
+    .login-box input:focus { outline: none; border-color: var(--gold); }
+    .login-box button {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--gold);
+      color: #fff;
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+    .login-error { color: var(--danger); font-size: 0.85rem; margin-top: 0.5rem; display: none; }
+
+    /* ADMIN LAYOUT */
+    #adminPanel { display: none; }
+    .admin-header {
+      background: var(--dark);
+      color: #fff;
+      padding: 0 1.5rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .admin-header h1 { font-size: 1rem; }
+    .admin-header span { font-size: 0.8rem; color: var(--gold); }
+    .header-right { display: flex; align-items: center; gap: 1rem; }
+    .logout-btn {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.5);
+      padding: 4px 10px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 6px;
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+    }
+    .logout-btn:hover { color: #fff; }
+    .view-site-btn {
+      font-size: 0.82rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: var(--gold);
+      color: #fff;
+      border: none;
+    }
+
+    .admin-main { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem; }
+
+    /* TABS */
+    .tabs { display: flex; gap: 4px; margin-bottom: 2rem; background: var(--white); padding: 4px; border-radius: var(--radius); border: 1px solid var(--border); width: fit-content; }
+    .tab-btn { padding: 0.5rem 1.25rem; border-radius: 8px; font-size: 0.88rem; font-weight: 500; background: transparent; color: var(--muted); border: none; transition: all 0.2s; }
+    .tab-btn.active { background: var(--dark); color: #fff; }
+
+    /* CARDS */
+    .card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.25rem; }
+    .card h2 { font-size: 1rem; margin-bottom: 1.25rem; }
+
+    /* FORM */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+    .form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 1rem; }
+    .form-group label { font-size: 0.82rem; font-weight: 500; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 0.65rem 0.85rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      background: var(--white);
+      color: var(--text);
+      width: 100%;
+    }
+    .form-group input:focus,
+    .form-group select:focus { outline: none; border-color: var(--gold); }
+
+    /* Image upload area */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      background: var(--gray);
+      position: relative;
+    }
+    .upload-zone:hover { border-color: var(--gold); }
+    .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .upload-zone p { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
+    .upload-zone .upload-icon { font-size: 1.5rem; }
+    .upload-preview { width: 100%; height: 120px; object-fit: cover; border-radius: 6px; margin-top: 8px; display: none; }
+
+    /* Buttons */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 0.65rem 1.25rem; border-radius: 8px; font-size: 0.88rem; font-weight: 500; transition: opacity 0.2s; cursor: pointer; border: none; }
+    .btn--gold { background: var(--gold); color: #fff; }
+    .btn--gold:hover { opacity: 0.88; }
+    .btn--outline { background: transparent; border: 1.5px solid var(--border); color: var(--text); }
+    .btn--danger { background: var(--danger); color: #fff; }
+    .btn--sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
+
+    /* Alert */
+    .alert { padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.88rem; margin-bottom: 1rem; display: none; }
+    .alert.success { background: #dcfce7; color: var(--success); border: 1px solid #86efac; display: block; }
+    .alert.error { background: #fee2e2; color: var(--danger); border: 1px solid #fca5a5; display: block; }
+
+    /* Projects list */
+    .project-list { display: flex; flex-direction: column; gap: 1rem; }
+    .project-item {
+      display: grid;
+      grid-template-columns: 80px 80px 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--gray);
+    }
+    @media (max-width: 600px) { .project-item { grid-template-columns: 1fr; } }
+    .project-item img { width: 80px; height: 60px; object-fit: cover; border-radius: 6px; }
+    .project-item__info h4 { font-size: 0.9rem; font-weight: 600; }
+    .project-item__info p { font-size: 0.8rem; color: var(--muted); }
+    .project-item__actions { display: flex; gap: 6px; }
+
+    /* Leads table */
+    .leads-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .leads-table th { text-align: left; padding: 8px 12px; border-bottom: 1.5px solid var(--border); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+    .leads-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .leads-table tr:last-child td { border-bottom: none; }
+    .lead-name { font-weight: 600; }
+    .lead-phone a { color: var(--gold); }
+    .badge-service { font-size: 0.72rem; background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 100px; }
+    .empty { text-align: center; padding: 3rem; color: var(--muted); font-size: 0.9rem; }
+
+    /* Loader */
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h1>Cambirela Admin</h1>
+    <p>Enter your admin password to continue</p>
+    <input type="password" id="passwordInput" placeholder="Password" autocomplete="current-password" />
+    <button id="loginBtn">Sign In</button>
+    <p class="login-error" id="loginError">Wrong password. Try again.</p>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel">
+  <header class="admin-header">
+    <div>
+      <h1>Cambirela Construction</h1>
+      <span>Admin Panel</span>
+    </div>
+    <div class="header-right">
+      <a href="/" class="view-site-btn">View Site</a>
+      <button class="logout-btn" id="logoutBtn">Sign Out</button>
+    </div>
+  </header>
+
+  <main class="admin-main">
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="projects">Projects</button>
+      <button class="tab-btn" data-tab="upload">Add Project</button>
+      <button class="tab-btn" data-tab="leads">Leads</button>
+    </div>
+
+    <!-- TAB: PROJECTS LIST -->
+    <div id="tab-projects">
+      <div class="card">
+        <h2>All Projects</h2>
+        <div id="alertProjects"></div>
+        <div class="project-list" id="projectList">
+          <p class="empty">Loading projects...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: UPLOAD -->
+    <div id="tab-upload" style="display:none">
+      <div class="card">
+        <h2>Add New Project</h2>
+        <div id="alertUpload"></div>
+        <form id="uploadForm">
+          <div class="form-group">
+            <label for="uTitle">Project Title *</label>
+            <input type="text" id="uTitle" placeholder="Master Bedroom Hardwood — Destin, FL" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="uCategory">Category *</label>
+              <select id="uCategory">
+                <option value="hardwood">Hardwood</option>
+                <option value="tile">Tile</option>
+                <option value="vinyl">Vinyl</option>
+                <option value="laminate">Laminate</option>
+                <option value="carpet">Carpet</option>
+                <option value="restoration">Restoration</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="uCaption">Caption</label>
+              <input type="text" id="uCaption" placeholder="2,400 sq ft · Engineered Oak" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Before Photo *</label>
+              <div class="upload-zone" id="beforeZone">
+                <div class="upload-icon">📷</div>
+                <p>Click to upload before photo</p>
+                <input type="file" id="beforeFile" accept="image/*" required />
+                <img class="upload-preview" id="beforePreview" alt="Before preview" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>After Photo *</label>
+              <div class="upload-zone" id="afterZone">
+                <div class="upload-icon">✨</div>
+                <p>Click to upload after photo</p>
+                <input type="file" id="afterFile" accept="image/*" required />
+                <img class="upload-preview" id="afterPreview" alt="After preview" />
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn--gold" id="uploadBtn">Add Project</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- TAB: LEADS -->
+    <div id="tab-leads" style="display:none">
+      <div class="card">
+        <h2>Estimate Requests</h2>
+        <div id="alertLeads"></div>
+        <div style="overflow-x:auto">
+          <table class="leads-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Service</th>
+                <th>Sq Ft</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="leadsBody">
+              <tr><td colspan="5" class="empty">Loading leads...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  const API = '/api';
+  let TOKEN = '';
+
+  // Login
+  const loginBtn = document.getElementById('loginBtn');
+  const passInput = document.getElementById('passwordInput');
+  const loginErr = document.getElementById('loginError');
+
+  async function doLogin() {
+    const pw = passInput.value.trim();
+    if (!pw) return;
+    loginBtn.disabled = true;
+    loginBtn.innerHTML = '<span class="spinner"></span>';
+    try {
+      const res = await fetch(`${API}/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw })
+      });
+      if (res.ok) {
+        TOKEN = pw;
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        loadProjects();
+      } else {
+        loginErr.style.display = 'block';
+      }
+    } finally {
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'Sign In';
+    }
+  }
+  loginBtn.addEventListener('click', doLogin);
+  passInput.addEventListener('keydown', e => e.key === 'Enter' && doLogin());
+
+  // Logout
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    TOKEN = '';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('adminPanel').style.display = 'none';
+    passInput.value = '';
+  });
+
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('[id^="tab-"]').forEach(t => t.style.display = 'none');
+      document.getElementById(`tab-${btn.dataset.tab}`).style.display = 'block';
+      if (btn.dataset.tab === 'projects') loadProjects();
+      if (btn.dataset.tab === 'leads') loadLeads();
+    });
+  });
+
+  function showAlert(id, msg, type) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = `alert ${type}`;
+    setTimeout(() => el.className = 'alert', 4000);
+  }
+
+  // Load projects
+  async function loadProjects() {
+    const list = document.getElementById('projectList');
+    list.innerHTML = '<p class="empty">Loading...</p>';
+    try {
+      const res = await fetch(`${API}/projects`);
+      const data = await res.json();
+      if (!data.length) { list.innerHTML = '<p class="empty">No projects yet. Add your first one!</p>'; return; }
+      list.innerHTML = data.map(p => `
+        <div class="project-item" data-id="${p.id}">
+          <img src="${p.before_image}" alt="Before" />
+          <img src="${p.after_image}" alt="After" />
+          <div class="project-item__info">
+            <h4>${p.title}</h4>
+            <p>${p.caption || ''} · <span class="badge-service">${p.category}</span></p>
+            <p style="font-size:0.75rem;color:#aaa;margin-top:4px">${new Date(p.created_at).toLocaleDateString()}</p>
+          </div>
+          <div class="project-item__actions">
+            <button class="btn btn--outline btn--sm" onclick="editProject(${p.id}, '${escStr(p.title)}', '${escStr(p.caption)}', '${p.category}')">Edit</button>
+            <button class="btn btn--danger btn--sm" onclick="deleteProject(${p.id})">Delete</button>
+          </div>
+        </div>
+      `).join('');
+    } catch { list.innerHTML = '<p class="empty">Failed to load projects.</p>'; }
+  }
+
+  function escStr(s) { return (s || '').replace(/'/g, "\\'"); }
+
+  async function deleteProject(id) {
+    if (!confirm('Delete this project? This cannot be undone.')) return;
+    await fetch(`${API}/admin/projects/${id}`, { method: 'DELETE', headers: { 'x-admin-token': TOKEN } });
+    showAlert('alertProjects', 'Project deleted.', 'success');
+    loadProjects();
+  }
+
+  function editProject(id, title, caption, category) {
+    const t = prompt('Edit title:', title);
+    if (t === null) return;
+    const c = prompt('Edit caption:', caption);
+    const cats = ['hardwood','tile','vinyl','laminate','carpet','restoration','other'];
+    const cat = prompt(`Edit category (${cats.join(', ')}):`, category);
+    fetch(`${API}/admin/projects/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'x-admin-token': TOKEN },
+      body: JSON.stringify({ title: t, caption: c, category: cat || category })
+    }).then(() => { showAlert('alertProjects', 'Project updated!', 'success'); loadProjects(); });
+  }
+
+  // Upload previews
+  function setupPreview(inputId, previewId) {
+    document.getElementById(inputId).addEventListener('change', function() {
+      const file = this.files[0];
+      if (!file) return;
+      const preview = document.getElementById(previewId);
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = 'block';
+    });
+  }
+  setupPreview('beforeFile', 'beforePreview');
+  setupPreview('afterFile', 'afterPreview');
+
+  // Upload form
+  document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('uploadBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Uploading...';
+
+    const formData = new FormData();
+    formData.append('title', document.getElementById('uTitle').value);
+    formData.append('caption', document.getElementById('uCaption').value);
+    formData.append('category', document.getElementById('uCategory').value);
+    formData.append('before', document.getElementById('beforeFile').files[0]);
+    formData.append('after', document.getElementById('afterFile').files[0]);
+
+    try {
+      const res = await fetch(`${API}/admin/projects`, {
+        method: 'POST',
+        headers: { 'x-admin-token': TOKEN },
+        body: formData
+      });
+      if (res.ok) {
+        showAlert('alertUpload', 'Project added successfully!', 'success');
+        e.target.reset();
+        document.getElementById('beforePreview').style.display = 'none';
+        document.getElementById('afterPreview').style.display = 'none';
+      } else {
+        const err = await res.json();
+        showAlert('alertUpload', err.error || 'Upload failed.', 'error');
+      }
+    } catch { showAlert('alertUpload', 'Network error. Try again.', 'error'); }
+    finally { btn.disabled = false; btn.textContent = 'Add Project'; }
+  });
+
+  // Load leads
+  async function loadLeads() {
+    const body = document.getElementById('leadsBody');
+    body.innerHTML = '<tr><td colspan="5" class="empty">Loading...</td></tr>';
+    try {
+      const res = await fetch(`${API}/admin/contacts`, { headers: { 'x-admin-token': TOKEN } });
+      const data = await res.json();
+      if (!data.length) { body.innerHTML = '<tr><td colspan="5" class="empty">No leads yet.</td></tr>'; return; }
+      body.innerHTML = data.map(l => `
+        <tr>
+          <td><span class="lead-name">${l.name}</span></td>
+          <td class="lead-phone"><a href="tel:${l.phone}">${l.phone}</a></td>
+          <td><span class="badge-service">${l.service || '—'}</span></td>
+          <td>${l.sqft ? l.sqft + ' sq ft' : '—'}</td>
+          <td style="white-space:nowrap;color:#999;font-size:0.8rem">${new Date(l.created_at).toLocaleDateString()}</td>
+        </tr>
+      `).join('');
+    } catch { body.innerHTML = '<tr><td colspan="5" class="empty">Failed to load leads.</td></tr>'; }
+  }
+</script>
+</body>
+</html>
