@@ -526,6 +526,12 @@ ul { list-style: none; }
 .stars { color: var(--gold); font-size: 1.1rem; letter-spacing: 2px; }
 .score-txt { font-size: 0.85rem; color: var(--text-muted); }
 
+.review-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
 .reviews-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
