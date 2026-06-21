@@ -55,28 +55,43 @@ filterBtns.forEach(btn => {
   });
 });
 
-// Static fallback projects (shown when API is unavailable)
+// Static projects gallery
 const STATIC_PROJECTS = [
   {
-    title: 'Living Room Hardwood Transformation',
-    caption: 'Complete hardwood installation · Destin, FL',
+    title: 'Hardwood Flooring',
+    caption: 'Engineered oak installation · Destin, FL',
     category: 'hardwood',
-    before_image: '/images/projects/lr-before.jpg',
-    after_image: '/images/projects/lr-after.jpg'
+    image: '/images/hardwood.jpg'
   },
   {
-    title: 'Kitchen Tile Renovation',
-    caption: 'Porcelain tile installation · Fort Walton Beach, FL',
+    title: 'Kitchen Tile',
+    caption: 'Porcelain tile · Fort Walton Beach, FL',
     category: 'tile',
-    before_image: '/images/projects/kitchen-before.jpg',
-    after_image: '/images/projects/kitchen-after.jpg'
+    image: '/images/tile.jpg'
   },
   {
-    title: 'Master Bedroom LVP Installation',
-    caption: 'Luxury vinyl plank · Miramar Beach, FL',
+    title: 'Luxury Vinyl Plank',
+    caption: 'Waterproof LVP · Miramar Beach, FL',
     category: 'vinyl',
-    before_image: '/images/projects/bedroom-before.jpg',
-    after_image: '/images/projects/bedroom-after.jpg'
+    image: '/images/vinyl.jpg'
+  },
+  {
+    title: 'Laminate Flooring',
+    caption: 'Premium laminate · Niceville, FL',
+    category: 'laminate',
+    image: '/images/laminate.jpg'
+  },
+  {
+    title: 'Bathroom Tile',
+    caption: 'Porcelain tile · Destin, FL',
+    category: 'tile',
+    image: '/images/tile-bath.jpg'
+  },
+  {
+    title: 'Floor Restoration',
+    caption: 'Hardwood refinishing · 30A, FL',
+    category: 'restoration',
+    image: '/images/restoration.jpg'
   }
 ];
 
@@ -85,19 +100,13 @@ function renderProjects(projects) {
   if (!projects.length) return;
   grid.innerHTML = projects.map(p => `
     <div class="project-card" data-category="${p.category || 'other'}">
-      <div class="project-card__images">
-        <img class="project-card__img" src="${p.before_image}" alt="Before — ${p.title}" loading="lazy" />
-        <img class="project-card__img" src="${p.after_image}" alt="After — ${p.title}" loading="lazy" />
-        <div class="project-card__divider"></div>
-        <div class="project-card__labels">
-          <span class="label-before">Before</span>
-          <span class="label-after">After</span>
-        </div>
+      <div class="project-card__photo">
+        <img src="${p.image}" alt="${p.title}" loading="lazy" />
+        <span class="project-card__cat">${p.category}</span>
       </div>
       <div class="project-card__body">
         <div class="project-card__title">${p.title}</div>
         <div class="project-card__caption">${p.caption}</div>
-        ${p.category ? `<span class="project-card__tag">${p.category}</span>` : ''}
       </div>
     </div>
   `).join('');
