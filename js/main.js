@@ -55,34 +55,64 @@ filterBtns.forEach(btn => {
   });
 });
 
-// Load portfolio from API
+// Static fallback projects (shown when API is unavailable)
+const STATIC_PROJECTS = [
+  {
+    title: 'Living Room Hardwood Transformation',
+    caption: 'Complete hardwood installation · Destin, FL',
+    category: 'hardwood',
+    before_image: '/images/projects/lr-before.jpg',
+    after_image: '/images/projects/lr-after.jpg'
+  },
+  {
+    title: 'Kitchen Tile Renovation',
+    caption: 'Porcelain tile installation · Fort Walton Beach, FL',
+    category: 'tile',
+    before_image: '/images/projects/kitchen-before.jpg',
+    after_image: '/images/projects/kitchen-after.jpg'
+  },
+  {
+    title: 'Master Bedroom LVP Installation',
+    caption: 'Luxury vinyl plank · Miramar Beach, FL',
+    category: 'vinyl',
+    before_image: '/images/projects/bedroom-before.jpg',
+    after_image: '/images/projects/bedroom-after.jpg'
+  }
+];
+
+function renderProjects(projects) {
+  const grid = document.getElementById('projectsGrid');
+  if (!projects.length) return;
+  grid.innerHTML = projects.map(p => `
+    <div class="project-card" data-category="${p.category || 'other'}">
+      <div class="project-card__images">
+        <img class="project-card__img" src="${p.before_image}" alt="Before — ${p.title}" loading="lazy" />
+        <img class="project-card__img" src="${p.after_image}" alt="After — ${p.title}" loading="lazy" />
+        <div class="project-card__divider"></div>
+        <div class="project-card__labels">
+          <span class="label-before">Before</span>
+          <span class="label-after">After</span>
+        </div>
+      </div>
+      <div class="project-card__body">
+        <div class="project-card__title">${p.title}</div>
+        <div class="project-card__caption">${p.caption}</div>
+        ${p.category ? `<span class="project-card__tag">${p.category}</span>` : ''}
+      </div>
+    </div>
+  `).join('');
+  document.querySelectorAll('.project-card').forEach(el => observer.observe(el));
+}
+
 async function loadProjects() {
   try {
     const res = await fetch('/api/projects');
-    if (!res.ok) return;
+    if (!res.ok) throw new Error();
     const projects = await res.json();
-    const grid = document.getElementById('projectsGrid');
-    if (!projects.length) return;
-    grid.innerHTML = projects.map(p => `
-      <div class="project-card" data-category="${p.category || 'other'}">
-        <div class="project-card__images">
-          <img class="project-card__img" src="${p.before_image}" alt="Before — ${p.title}" loading="lazy" />
-          <img class="project-card__img" src="${p.after_image}" alt="After — ${p.title}" loading="lazy" />
-          <div class="project-card__divider"></div>
-          <div class="project-card__labels">
-            <span class="label-before">Before</span>
-            <span class="label-after">After</span>
-          </div>
-        </div>
-        <div class="project-card__body">
-          <div class="project-card__title">${p.title}</div>
-          <div class="project-card__caption">${p.caption}</div>
-          ${p.category ? `<span class="project-card__tag">${p.category}</span>` : ''}
-        </div>
-      </div>
-    `).join('');
-    document.querySelectorAll('.project-card').forEach(el => observer.observe(el));
-  } catch (_) {}
+    renderProjects(projects.length ? projects : STATIC_PROJECTS);
+  } catch (_) {
+    renderProjects(STATIC_PROJECTS);
+  }
 }
 loadProjects();
 
