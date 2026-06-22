@@ -58,40 +58,28 @@ filterBtns.forEach(btn => {
 // Static projects gallery
 const STATIC_PROJECTS = [
   {
-    title: 'Hardwood Flooring',
-    caption: 'Engineered oak installation · Destin, FL',
-    category: 'hardwood',
-    image: '/images/hardwood.jpg'
-  },
-  {
-    title: 'Kitchen Tile',
-    caption: 'Porcelain tile · Fort Walton Beach, FL',
-    category: 'tile',
-    image: '/images/tile.jpg'
-  },
-  {
     title: 'Luxury Vinyl Plank',
-    caption: 'Waterproof LVP · Miramar Beach, FL',
+    caption: 'Waterproof LVP · Destin, FL',
     category: 'vinyl',
-    image: '/images/vinyl.jpg'
+    image: '/images/flooring.png'
   },
   {
-    title: 'Laminate Flooring',
-    caption: 'Premium laminate · Niceville, FL',
-    category: 'laminate',
-    image: '/images/laminate.jpg'
+    title: 'Kitchen Backsplash',
+    caption: 'Tile backsplash · Fort Walton Beach, FL',
+    category: 'tile',
+    image: '/images/backsplash.png'
   },
   {
     title: 'Bathroom Tile',
     caption: 'Porcelain tile · Destin, FL',
     category: 'tile',
-    image: '/images/tile-bath.jpg'
+    image: '/images/banheiro.png'
   },
   {
     title: 'Floor Restoration',
-    caption: 'Hardwood refinishing · 30A, FL',
+    caption: 'Refinishing & restoration · Destin, FL',
     category: 'restoration',
-    image: '/images/restoration.jpg'
+    image: '/images/restauration.png'
   }
 ];
 
